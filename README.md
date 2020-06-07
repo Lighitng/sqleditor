@@ -1,6 +1,8 @@
 # editor
 
 > A Vue.js project
+## 说明书 & 设计文档
+文档均位于```docs/```下
 
 ## Build Setup
 
