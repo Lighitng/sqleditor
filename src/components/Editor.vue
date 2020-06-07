@@ -69,7 +69,7 @@
       <el-footer>
         <el-tabs type="border-card" style="height: 100%;">
           <el-tab-pane label="结果">
-            <p v-if="result.loading">Executing SQL...</p>
+            <p v-if="result.loading">{{ result.temp_message }}</p>
             <vtable v-if="result.tableData.length > 0" :table-data="result.tableData" :columns="result.columns"></vtable>
           </el-tab-pane>
         </el-tabs>
@@ -79,16 +79,16 @@
     <el-dialog title="连接" :visible.sync="dialogFormVisible">
       <el-form :model="connection" label-position="top" label-width="60px" style="text-align: center;">
         <el-form-item label="主机">
-          <el-input v-model="connection.ip" :disabled="true" auto-complete="off"></el-input>
+          <el-input v-model="connection.ip" placeholder="host" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="用户名">
-          <el-input v-model="connection.username" auto-complete="off"></el-input>
+          <el-input v-model="connection.username" placeholder="User name" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="密码">
-          <el-input v-model="connection.password" type="password" auto-complete="off"></el-input>
+          <el-input v-model="connection.password" placeholder="Password" type="password" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="数据库名">
-          <el-input v-model="connection.Spark_db" auto-complete="off"></el-input>
+          <el-input v-model="connection.Spark_db" placeholder="Database" auto-complete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" style="text-align: center;">
@@ -110,10 +110,10 @@
     },
     data () {
       return {
-        debug: true,
+        debug: false,
         dialogFormVisible: false,
         connection: {
-          ip: 'host',
+          ip: '',
           username: '',
           password: '',
           Spark_db: ''
@@ -127,13 +127,13 @@
           enableSnippets: true,
           enableLiveAutocompletion: true
         },
-        content: "write your sql here",
+        content: "-- write your sql here",
         databases: [],
         result: {
           columns: [],
           // result set
           tableData: [],
-          msg: "",
+          temp_message: "Executing SQL...",
           loading: false,
         },
       }
@@ -194,9 +194,14 @@
           console.log(data)
           return
         }
+        if (!data || data.length === 0 || data.length === undefined) {
+          this.result.temp_message = data || 'Unknown error'
+          return
+        }
+        const keys = Object.keys(data[1])
         this.result.loading = false
-        this.result.columns = data.columns
-        this.result.tableData = data.tableData
+        this.result.columns = keys
+        this.result.tableData = data
       },
       handleOpen: async function(key, keyPath) {
         // console.log('You clicked db ', this.databases[key].name)

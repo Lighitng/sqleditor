@@ -8,7 +8,7 @@
     </div>
   </div> -->
   <el-table
-    :data="tableObjAry"
+    :data="tableData"
     stripe
     style="width: 100%;"
     height="15rem">

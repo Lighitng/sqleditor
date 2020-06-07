@@ -21,14 +21,28 @@ class Service {
     }
     let url = self.resource.get_dbs_url
     let res = await self.http.post(url, params, options)
-    return res.body
+    const databases = res.body
+    const dbs = []
+    
+    for (let dbindex in databases) {
+      let db = {}
+      db.name = databases[dbindex].database
+      dbs.push(db)
+    }
+    return dbs
   }
   
   async getTables(params) {
     const self = this
     let url = self.resource.get_tables_url
     let res = await self.http.post(url, params, self.defaultOption)
-    return res.body
+    const tables = res.body
+    const tbs = []
+    
+    for (let tbindex in tables) {
+      tbs.push(tables[tbindex].tablename)
+    }
+    return tbs
   }
 
   async submitJob(connection, sql, mock=false) {
