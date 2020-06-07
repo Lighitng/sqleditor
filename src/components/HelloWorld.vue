@@ -5,18 +5,21 @@
             default-active="2"
             class="el-menu-vertical-demo"
             @open="handleOpen"
-            @close="handleClose">
+            @close="handleClose"
+            background-color="#545c64"
+            text-color="#fff"
+            active-text-color="#ffd04b">
             <el-submenu v-for="(db, db_index) in databases" :index="db_index.toString()" :key="db.name" style="text-align: left;">
               <template slot="title">
                 <span>
                   <i>
-                    <svg t="1591377619704" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1230" width="1.5rem" height="1.5rem"><path d="M160 320c0-94.624 153.312-157.664 341.504-159.936L512 160c189.44 0 346.208 61.344 351.84 154.784L864 320v384c0 96.384-159.04 160-352 160S160 800.384 160 704V320z m352 286.624c-118.4 0-224.064-24-288-64.768V576c0 44.992 127.488 96 288 96s288-51.008 288-96l0.032-34.176c-63.936 40.8-169.6 64.8-288.032 64.8zM512 480c-118.4 0-224.064-23.968-288-64.768v31.36c0 45.024 127.488 96 288 96s288-50.976 288-96l0.032-31.36C736.096 456 630.432 480 512 480z m0-256c-160.512 0-288 51.008-288 96s127.488 96 288 96 288-51.008 288-96-127.488-96-288-96z m0 576c160.512 0 288-51.008 288-96l0.032-32.768C736.096 712 630.432 736 512 736c-118.4 0-224.064-23.968-288-64.768V704c0 44.992 127.488 96 288 96z" p-id="1231"></path></svg>
+                    <svg t="1591534559322" style="padding:0 3px 3px 3px;" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2286" width="1.2rem" height="1.2rem"><path d="M870.4 57.6C780.8 19.2 652.8 0 512 0 371.2 0 243.2 19.2 153.6 57.6 51.2 102.4 0 153.6 0 211.2l0 595.2c0 57.6 51.2 115.2 153.6 153.6C243.2 1004.8 371.2 1024 512 1024c140.8 0 268.8-19.2 358.4-57.6 96-38.4 153.6-96 153.6-153.6L1024 211.2C1024 153.6 972.8 102.4 870.4 57.6L870.4 57.6zM812.8 320C729.6 352 614.4 364.8 512 364.8 403.2 364.8 294.4 352 211.2 320 115.2 294.4 70.4 256 70.4 211.2c0-38.4 51.2-76.8 140.8-108.8C294.4 76.8 403.2 64 512 64c102.4 0 217.6 19.2 300.8 44.8 89.6 32 140.8 70.4 140.8 108.8C953.6 256 908.8 294.4 812.8 320L812.8 320zM819.2 505.6C736 531.2 620.8 550.4 512 550.4c-108.8 0-217.6-19.2-307.2-44.8C115.2 473.6 64 435.2 64 396.8L64 326.4C128 352 172.8 384 243.2 396.8 326.4 416 416 428.8 512 428.8c96 0 185.6-12.8 268.8-32C851.2 384 896 352 960 326.4l0 76.8C960 435.2 908.8 473.6 819.2 505.6L819.2 505.6zM819.2 710.4c-83.2 25.6-198.4 44.8-307.2 44.8-108.8 0-217.6-19.2-307.2-44.8C115.2 684.8 64 646.4 64 601.6L64 505.6c64 32 108.8 57.6 179.2 76.8C326.4 601.6 416 614.4 512 614.4c96 0 185.6-12.8 268.8-32C851.2 563.2 896 537.6 960 505.6l0 96C960 646.4 908.8 684.8 819.2 710.4L819.2 710.4zM512 960c-108.8 0-217.6-19.2-307.2-44.8C115.2 889.6 64 851.2 64 812.8l0-96c64 32 108.8 57.6 179.2 76.8 76.8 19.2 172.8 32 262.4 32 96 0 185.6-12.8 268.8-32 76.8-19.2 121.6-44.8 185.6-76.8l0 96c0 38.4-51.2 76.8-140.8 108.8C736 947.2 614.4 960 512 960L512 960zM512 960" p-id="2287" fill="#e6e6e6"></path></svg>
                   </i>
                   {{ db.name }}
                 </span>
               </template>
               <el-menu-item-group>
-                <el-menu-item v-for="(table, t_index) in db.tables" :index="t_index.toString()" @click="getTableDetails(db_index, t_index)" :key="db.name + t_index">
+                <el-menu-item v-for="(table, t_index) in db.tables" :index="db.name + t_index" @click="getTableDetails(db_index, t_index)" :key="db.name + t_index">
                   <i class="el-icon-tickets"></i>
                   {{ table }}
                 </el-menu-item>
@@ -28,7 +31,28 @@
       </div>
     </el-aside>
     <el-container>
-      <el-header>Header</el-header>
+      <el-header>
+        执行数据库
+        <el-select v-model="current_db" placeholder="选择数据库" @change="dbChanged">
+            <el-option
+              v-for="(db, index) in databases"
+              :key="db.name"
+              :label="db.name"
+              :value="index">
+            </el-option>
+          </el-select>
+          执行表
+          <el-select v-model="current_table" placeholder="选择表">
+            <div v-if="databases.length > 0 && current_db_index >= 0">
+              <el-option
+                v-for="(table, index) in databases[current_db_index].tables"
+                :key="table"
+                :label="table"
+                :value="table">
+              </el-option>
+            </div>
+          </el-select>
+      </el-header>
       <el-main>
         <div id="editor">
           <editor v-model="content"
@@ -55,13 +79,16 @@
     <el-dialog title="连接" :visible.sync="dialogFormVisible">
       <el-form :model="connection" label-position="top" label-width="60px" style="text-align: center;">
         <el-form-item label="主机">
-          <el-input v-model="connection.host" :disabled="true" auto-complete="off"></el-input>
-         </el-form-item>
+          <el-input v-model="connection.ip" :disabled="true" auto-complete="off"></el-input>
+        </el-form-item>
         <el-form-item label="用户名">
           <el-input v-model="connection.username" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="密码">
           <el-input v-model="connection.password" type="password" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="数据库名">
+          <el-input v-model="connection.Spark_db" auto-complete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" style="text-align: center;">
@@ -73,23 +100,28 @@
 </template>
 
 <script>
-  import Backend from "@/components/Backend.js"
+  import Service from "@/components/Service.js"
   import Table from "@/components/Table.vue"
   export default {
-    name: 'HelloWorld',
+    name: 'Editor',
     components: {
       'editor': require('vue2-ace-editor'),
       'vtable': Table
     },
     data () {
       return {
+        debug: true,
         dialogFormVisible: false,
         connection: {
-          host: 'host',
+          ip: 'host',
           username: '',
           password: '',
-          key: ''
+          Spark_db: ''
         },
+        connection_key: '',
+        current_db: '',
+        current_db_index: -1,
+        current_table: '',
         editor_options: {
           enableBasicAutocompletion: true,
           enableSnippets: true,
@@ -107,24 +139,39 @@
       }
     },
     methods: {
-      connectDB: function() {
-        console.log('DB connected')
-        this.dialogFormVisible = !this.dialogFormVisible
-        this.databases = [{
-          name: 'db1',
-          tables: ['db1-table1', 'db1-table2']
-        }, {
-          name: 'db2',
-          tables: ['db2-table1', 'db2-table2', 'db2-table3']
-        }]
+      connectDB: async function() {
+        // console.log('DB connected')
+        // this.dialogFormVisible = !this.dialogFormVisible
+        // this.databases = [{
+        //   name: 'db1',
+        //   tables: ['db1-table1', 'db1-table2']
+        // }, {
+        //   name: 'db2',
+        //   tables: ['db2-table1', 'db2-table2', 'db2-table3']
+        // }]
+        const http = this.$http
+        const service = new Service(http)
+        const data = await service.connect(this.$data.connection)
+        if (this.debug) {
+          console.log('Received data(connect):')
+          console.log(data)
+        }
+        this.databases = data
+        if (this.databases !== 0) {
+          this.connection_key = 'key'
+        }
+        this.dialogFormVisible = false
       },
       editorInit: function () {
         require('brace/ext/language_tools')
         require('brace/mode/sql')
         require('brace/theme/twilight')
       },
-      submitRunSQL: function (event) {
-        if (this.connection.key == '') {
+      submitRunSQL: async function () {
+        const http = this.$http
+        const service = new Service(http)
+        const self = this
+        if (this.connection_key === '') {
           this.dialogFormVisible = true
           this.$message.error({
             message: "请先进行连接",
@@ -132,43 +179,66 @@
           });
           return
         }
-        const self = this
-        self.result.loading = true
-    
-        //clean preview table
-        self.result.tableData = []
-        self.result.columns = []
-        //clean preview msg
-        self.result.msg = ""
-    
-        // let selectContent = self.holder.tool().selection()
-        let sql = self.content
-    
-        const backend = new Backend(self.$http)
-    
-        const res = backend.submitJob({
-          "sql": sql,
-          "user": "root",
-        }, function () {
-          self.result.loading = true
-        }, function () {
-          self.result.loading = false
-        }, function (msg) {
-          self.result.loading = false
-          self.result.msg = msg
-        }, true)
-    
-        self.result.columns = res["columns"]
-        self.result.tableData = res["tableData"]
+        if (this.current_db === '') {
+          this.$message.error({
+            message: "请选择要执行的数据库",
+            customClass: "el-message"
+          });
+        }
+        this.result.loading = true
+        const connection = this.connection
+        connection.Spark_db = this.databases[this.current_db_index].name
+        const data = await service.submitJob(connection, self.content)
+        if (this.debug) {
+          console.log('Received data(run sql):')
+          console.log(data)
+          return
+        }
+        this.result.loading = false
+        this.result.columns = data.columns
+        this.result.tableData = data.tableData
       },
-      handleOpen: function(key, keyPath) {
-        console.log(key, keyPath);
+      handleOpen: async function(key, keyPath) {
+        // console.log('You clicked db ', this.databases[key].name)
+        // console.log(`db: ${this.current_db} table: ${this.current_table}`)
+
+        if (Object.keys(this.databases[key]).indexOf('tables') === -1) {
+          const http = this.$http
+          const service = new Service(http)
+          let connection = this.connection
+          connection.Spark_db = this.databases[key].name
+          const data = await service.getTables(connection)
+          if (this.debug) {
+            console.log('Received data(get table):')
+            console.log(data)
+          }
+          this.databases[key].tables = data
+          this.current_db_index = key
+        }
       },
       handleClose: function(key, keyPath) {
-        console.log(key, keyPath);
       },
       getTableDetails: function(db_index, table_index) {
-        console.log("You clicked table ", this.$data.databases[db_index].tables[table_index])
+        // console.log("You clicked table ", this.$data.databases[db_index].tables[table_index])
+        this.current_db = this.databases[db_index].name
+        this.current_db_index = db_index
+        this.current_table = ''
+      },
+      dbChanged: async function(db_index) {
+        if (Object.keys(this.databases[db_index]).indexOf('tables') === -1) {
+          const http = this.$http
+          const service = new Service(http)
+          let connection = this.connection
+          connection.Spark_db = this.databases[db_index].name
+          const data = await service.getTables(connection)
+          if (this.debug) {
+            console.log('Received data(get table):')
+            console.log(data)
+          }
+          this.databases[db_index].tables = await service.getTables(connection)
+        }
+        this.current_db_index = db_index
+        this.current_table = ''
       }
     },
   }
@@ -176,8 +246,8 @@
 
 <style>
   .el-header {
-    background-color: #B3C0D1;
-    color: #333;
+    background-color: #545c64;
+    color: #ffd04b;
     text-align: center;
     line-height: 6rem;
     min-height: 6rem;
@@ -190,7 +260,7 @@
     padding: 2px;
   }
   .el-aside {
-    background-color: #FFF;
+    background-color: #545c64;
     color: #333;
     text-align: center;
     line-height: 56rem;
